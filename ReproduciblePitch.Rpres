@@ -1,0 +1,91 @@
+
+
+Finance-Webscraper.io
+========================================================
+author: Karl Moufarrej
+date: 22-4-2016
+
+Finance-Webscraper.ShinyApps.io
+========================================================
+
+
+Aggregating Financial News across the world!
+
+Chose this task to:
+- Explore the Set Up of a website using Shiny Apps for a later project I'm working on.
+- Understand how webscraping RSS Feeds worked using R.
+- Start Aggregating Financial Data, for further use in Predictive Analytics in the Financial Industry (Kaggle made me evil).
+
+Demo: Wall Street Journal Tech Feed
+========================================================
+
+
+Here's a demo of the output, the function is included in the code (Check out Github for that).
+```{r, echo = FALSE}
+wsj_tech <- function() {
+  
+  #WSJ Extraction Script:
+  library(XML)
+  
+  #Tree Extraction
+  temp.xml <- xmlTreeParse("http://www.wsj.com/xml/rss/3_7455.xml")
+  
+  #Item Based Segregation
+  extract.xml <- xpathApply(xmlRoot(temp.xml), "//item")
+  
+  #Initialize Vectors
+  Source <- rep("WSJ",length(extract.xml))
+  Title <- c()
+  Link <- c()
+  Description <- c()
+  Publication_Date <- c()
+  
+  for (i in 1:length(extract.xml)) {
+    
+    #Extract Raw Output of Item
+    out.temp <- xmlSApply(extract.xml[[i]], xmlValue)
+    
+    #Assign Raw Output by Tag to the Vectors
+    Title <- c(Title, out.temp[1])
+    Link <- c(Link, out.temp[3])
+    Description <- c(Description, out.temp[4])
+    Publication_Date <- c(Publication_Date, out.temp[7])
+    
+    
+  }
+  
+  #Consolidate
+  wsj_updated <- data.frame(as.character(Source),as.character(Title), as.character(Link), as.character(Description),
+                            as.character(Publication_Date))
+  names(wsj_updated) <- c("Source","Title", "Link", "Description", "Publication Date")
+  
+  return(wsj_updated)
+}
+knitr::kable(wsj_tech()[1:2,])
+```
+
+Webscraper Structure
+========================================================
+
+
+- Create RSS Feed Extractor Functions for WSJ, Forbes, Bloomberg Podcasts and CNN Money
+- Allow User to Select Specific Data Sources
+- Display in UI the Data Table to list all the Articles
+
+Next Steps
+========================================================
+
+
+- Create Links to Additional Sites (Reuters, AFP, Regional/Local News Sites)
+- Format the extracted Article Headlines (Dates, Encoding, Category)
+- Store the Articles in a database that refreshes Automatically and stores the data
+- Start Doing some Natural Language Processing and use these newly acquired Data Points in predicting Finance Securities Fluctuations!
+
+Thanks for Bearing with me!
+========================================================
+
+
+In Case you're interested in linking up with me here's my info, don't hesitate to message me:
+- Linkedin: https://lb.linkedin.com/in/karl-moufarrej-89727589 
+- Mail: KarlMoufarrej@gmail.com
+- If you're wondering what I do, I'm a Supply & Demand Planner for Diageo in Lebanon, the world largest spirits company. Along with other Analytics/Machine Learning Oriented Projects I'm trying to bring to life.
